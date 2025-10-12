@@ -13,6 +13,10 @@ public class PrimSolver {
         this.solution = solve();
     }
     
+    public PrimSolver() {
+    	
+    }
+    
     public void updateGraph(Graph grafo) {
     	this.grafo = grafo;
         this.solution = solve();
@@ -58,7 +62,7 @@ public class PrimSolver {
         return resultado;
     }
     
-    private int similCalc(User u1, User u2) {
+    int similCalc(User u1, User u2) {
         return Math.abs(u1.getInteresTango() - u2.getInteresTango()) +
                Math.abs(u1.getInteresFolclore() - u2.getInteresFolclore()) +
                Math.abs(u1.getInteresRock() - u2.getInteresRock()) +

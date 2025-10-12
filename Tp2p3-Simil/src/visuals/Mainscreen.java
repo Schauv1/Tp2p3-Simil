@@ -2,262 +2,334 @@ package visuals;
 
 import java.awt.EventQueue;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import system.*;
-import java.awt.event.ActionListener;
+import java.awt.Insets;
 import java.util.List;
 import java.util.Set;
-import java.awt.event.ActionEvent;
-import javax.swing.JTextField;
+
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+
+import system.Arista;
+import system.ClusterDivider;
+import system.Graph;
+import system.Groups;
+import system.PrimSolver;
+import system.User;
 
 public class Mainscreen extends JFrame {
 
-	private static final long serialVersionUID = 1L;
-	private JPanel contentPane, panel;
-	private Graph _graph;
-	private PrimSolver _solver;
-	private Groups _groups;	
-	private ClusterDivider _divider;
-	private JLabel lblInterest1,lblInterest2,lblInterest3,lblInterest4, lblUser, lblnewInterest4, 
-	lblnewInterest3, lblnewInterest2, lblnewInterest1, lblNewName;
-	private JComboBox<User> comboBox;
-	private JTextField InterestField4, InterestField3, InterestField2, InterestField1, newNameField;
-	private JButton generateGroupsbtn, addUserbtn;
-	private JLabel lblGroupAmount;
-	private JTextField txtGroup;
+    private static final long serialVersionUID = 1L;
+    private JPanel contentPane, panelResultados;
+    private Graph _graph;
+    private PrimSolver _solver;
+    private Groups _groups;
+    private ClusterDivider _divider;
+    private JButton deleteUserBtn;
 
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Mainscreen frame = new Mainscreen();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+    
+    private JComboBox<User> comboBox;
+    private JTextField interestField4, interestField3, interestField2, interestField1, newNameField, txtGroup;
+    private JButton generateGroupsBtn, addUserBtn;
 
-	public Mainscreen() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 654, 466);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
-		
-		initializeVisuals();
-		initializeLogic();
-		initializeInteractuables();
-	}
-	
-	private void initializeVisuals() {
-		lblUser = new JLabel("Usuario");
-		lblUser.setBounds(22, 22, 46, 14);
-		contentPane.add(lblUser);
-		
-		lblInterest1 = new JLabel("Interes Tango:");
-		lblInterest1.setBounds(22, 75, 150, 14);
-		contentPane.add(lblInterest1);
-		
-		lblInterest2 = new JLabel("Interes Folclore:");
-		lblInterest2.setBounds(22, 88, 150, 14);
-		contentPane.add(lblInterest2);
-		
-		lblInterest3 = new JLabel("Interes Urbano:");
-		lblInterest3.setBounds(22, 113, 150, 14);
-		contentPane.add(lblInterest3);
-		
-		lblInterest4 = new JLabel("Interes Rock:");
-		lblInterest4.setBounds(22, 100, 150, 14);
-		contentPane.add(lblInterest4);
-		
-		
-		lblnewInterest4 = new JLabel("Interes Urbano");
-		lblnewInterest4.setBounds(22, 359, 104, 14);
-		contentPane.add(lblnewInterest4);
-		
-		lblnewInterest3 = new JLabel("Interes Rock");
-		lblnewInterest3.setBounds(22, 318, 86, 14);
-		contentPane.add(lblnewInterest3);
-		
-		lblnewInterest2 = new JLabel("Interes Folclore");
-		lblnewInterest2.setBounds(22, 277, 86, 14);
-		contentPane.add(lblnewInterest2);
-		
-		lblnewInterest1 = new JLabel("Interes Tango");
-		lblnewInterest1.setBounds(22, 237, 86, 14);
-		contentPane.add(lblnewInterest1);
-		
-		lblNewName = new JLabel("Nombre");
-		lblNewName.setBounds(22, 190, 86, 14);
-		contentPane.add(lblNewName);
-		
-		lblGroupAmount = new JLabel("Cantidad:");
-		lblGroupAmount.setBounds(169, 336, 80, 14);
-		contentPane.add(lblGroupAmount);
-		
-		panel = new JPanel();
-		panel.setBounds(162, 11, 466, 281);
-		contentPane.add(panel);
-		panel.setLayout(new GridLayout(3, 2, 0, 0));
-		
-		generateGroupsbtn = new JButton("Generar grupos");
-		generateGroupsbtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				generateGroups();
-			}
-		});
-		generateGroupsbtn.setBounds(172, 309, 137, 23);
-		contentPane.add(generateGroupsbtn);
-	}
-	
-	private void initializeLogic() {
-		_graph = new Graph();
-		for (int i = 0; i < 20; i++) {
-			_graph.addUser(new User(i));
-		}
-		_solver = new PrimSolver(_graph);
-		List<Arista> mst = _solver.getSolution();
-		_groups = new Groups(mst, _graph.size(), _graph);
-		_divider = new ClusterDivider();
-	}
-	
+    
+    private JLabel lblInterestTangoValue, lblInterestFolcloreValue, lblInterestRockValue, lblInterestUrbanoValue;
 
-	private void initializeInteractuables() {
-		comboBox = new JComboBox<User>();
-		comboBox.setBounds(22, 42, 130, 22);
-		contentPane.add(comboBox);
-		
-		InterestField4 = new JTextField();
-		InterestField4.setBounds(22, 374, 86, 20);
-		contentPane.add(InterestField4);
-		InterestField4.setColumns(10);
-		
-		InterestField3 = new JTextField();
-		InterestField3.setBounds(22, 333, 86, 20);
-		contentPane.add(InterestField3);
-		InterestField3.setColumns(10);
-		
-		InterestField2 = new JTextField();
-		InterestField2.setBounds(22, 295, 86, 20);
-		contentPane.add(InterestField2);
-		InterestField2.setColumns(10);
-		
-		InterestField1 = new JTextField();
-		InterestField1.setBounds(22, 254, 86, 20);
-		contentPane.add(InterestField1);
-		InterestField1.setColumns(10);
-		
-		newNameField = new JTextField();
-		newNameField.setBounds(22, 210, 86, 20);
-		contentPane.add(newNameField);
-		newNameField.setColumns(10);
-		
-		addUserbtn = new JButton("Agregar usuario");
-		addUserbtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				addUser();
-			}
-		});
-		addUserbtn.setBounds(10, 397, 130, 23);
-		contentPane.add(addUserbtn);
-		
-		txtGroup = new JTextField();
-		txtGroup.setText("2");
-		txtGroup.setBounds(223, 333, 86, 20);
-		contentPane.add(txtGroup);
-		txtGroup.setColumns(10);
+    public static void main(String[] args) {
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    Mainscreen frame = new Mainscreen();
+                    frame.setVisible(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 
-		for (int i = 0; i<_graph.size(); i++)
-			comboBox.addItem(_graph.getUser(i));
-		
-		comboBox.addActionListener((new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				updateUser();
-			}
-		}));
-		updateUser();
-	}
-	
-	private void updateUser() {
-		lblInterest1.setText(rebuildText(lblInterest1.getText())+ " " + ((User) comboBox.getSelectedItem()).getInteresTango());
-		lblInterest2.setText(rebuildText(lblInterest2.getText())+ " " + ((User) comboBox.getSelectedItem()).getInteresFolclore());
-		lblInterest3.setText(rebuildText(lblInterest3.getText())+ " " + ((User) comboBox.getSelectedItem()).getInteresRock());
-		lblInterest4.setText(rebuildText(lblInterest4.getText())+ " " + ((User) comboBox.getSelectedItem()).getInteresUrbano());
-	}
-	
-	private void generateGroups() {
-		panel.removeAll();
-		try {
-		int cantidad = Integer.parseInt(txtGroup.getText());
-		List<Arista> mst = _solver.getSolution();
-		List<Set<Integer>> grupos = _divider.dividirEnXGrupos(mst, _graph.size(), cantidad);
-		_groups.updateGroups(grupos);
-		for (int i = 0; i < cantidad; i++) {
-			JScrollPane scrollPane = new JScrollPane();
-			panel.add(scrollPane);
-			JLabel lblGroupNumber = new JLabel("<html>group: " + (i+1) + "<br/>");
-			for (int id: grupos.get(i)) {
-				lblGroupNumber.setText(lblGroupNumber.getText().concat(_graph.getUser(id) + "<br/>"));
-			}
-			List <String[]> txtlist = _groups.averagesWritten();
-			for (String s : txtlist.get(i)) {
-				lblGroupNumber.setText(lblGroupNumber.getText().concat(s + "<br/>"));
-			}
-			lblGroupNumber.setText(lblGroupNumber.getText().concat("<html>"));
-			lblGroupNumber.setBounds(10, 11, 120, 120);
-			scrollPane.setViewportView(lblGroupNumber);
-			panel.revalidate();
-		}
-		}
-		catch (Exception e) {
-			txtGroup.setText("2");
-			throw new IllegalArgumentException("Hay un caracter invalido en la cantidad de grupos");
-		}
-	}
-	
-	private void addUser() {
-		if (newNameField.getText().isBlank() || InterestField1.getText().isBlank() || InterestField2.getText().isBlank() ||
-				InterestField3.getText().isBlank() || InterestField4.getText().isBlank())
-			throw new IllegalArgumentException("Algun campo esta vacio");
-		try {
-		String nombre = newNameField.getText();
-		int interesTango = Integer.parseInt(InterestField1.getText());
-		int interesFolclore = Integer.parseInt(InterestField2.getText());
-		int interesRock = Integer.parseInt(InterestField3.getText());
-		int interesUrbano = Integer.parseInt(InterestField4.getText());
-		
-		User newuser = new User(_graph.size(),nombre,interesTango,interesFolclore,interesRock,interesUrbano);
-		_graph.addUser(newuser);
-		_solver.updateGraph(_graph);
-		_groups = null;
-		_groups = new Groups(_solver.getSolution(),_graph.size(),_graph);
-		clearFields();
-		}
-		catch (Exception e) {
-			clearFields();
-			throw new IllegalArgumentException("Algun campo de interes tiene letras");
-		}
-	}
-	
-	private void clearFields() {
-		InterestField1.setText("");
-		InterestField2.setText("");
-		InterestField3.setText("");
-		InterestField4.setText("");
-		newNameField.setText("");
-	}
+    public Mainscreen() {
+        setTitle("Agrupador de Usuarios por Gustos Musicales");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setBounds(100, 100, 800, 600);
+        
+        initializeLogic();  
+        initializeLayout();  
+        
+        
+        populateComboBox();
+        updateUserSelectionInfo();
+    }
 
-	private String rebuildText(String base) {
-		return base.substring(0,base.indexOf(":")+1);
-	}
+    private void initializeLogic() {
+        _graph = new Graph();
+        for (int i = 0; i < 20; i++) {
+            _graph.addUser(new User(i));
+        }
+        _solver = new PrimSolver(_graph);
+        _divider = new ClusterDivider();
+         
+    }
+    
+    private void initializeLayout() {
+        contentPane = new JPanel();
+        contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
+        contentPane.setLayout(new BorderLayout(10, 10)); 
+        setContentPane(contentPane);
+        
+       
+        JPanel leftPanel = createLeftControlPanel();
+        contentPane.add(leftPanel, BorderLayout.WEST);
+
+         
+        panelResultados = new JPanel();
+        panelResultados.setLayout(new GridLayout(0, 2, 10, 10));  
+        
+        
+        JScrollPane scrollPane = new JScrollPane(panelResultados);
+        contentPane.add(scrollPane, BorderLayout.CENTER);
+    }
+    
+    private JPanel createLeftControlPanel() {
+        JPanel controlPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);  
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;  
+
+         
+        controlPanel.add(new JLabel("Seleccionar Usuario:"), gbc);
+        gbc.gridy++;
+        comboBox = new JComboBox<>();
+        comboBox.addActionListener(e -> updateUserSelectionInfo());
+
+        deleteUserBtn = new JButton("Eliminar");
+        deleteUserBtn.addActionListener(e -> deleteSelectedUser());
+        JPanel userSelectionPanel = new JPanel(new BorderLayout(5, 0));
+        userSelectionPanel.add(comboBox, BorderLayout.CENTER);
+        userSelectionPanel.add(deleteUserBtn, BorderLayout.EAST);
+        controlPanel.add(userSelectionPanel, gbc);
+
+        /////////////////////////////////////////////
+        gbc.gridy++;
+        controlPanel.add(new JSeparator(), gbc);
+        gbc.gridy++;
+        gbc.gridwidth = 1;  
+        
+        controlPanel.add(new JLabel("Interés Tango:"), gbc);
+        gbc.gridx = 1;
+        lblInterestTangoValue = new JLabel("-");
+        controlPanel.add(lblInterestTangoValue, gbc);
+        
+        gbc.gridx = 0; gbc.gridy++;
+        controlPanel.add(new JLabel("Interés Folclore:"), gbc);
+        gbc.gridx = 1;
+        lblInterestFolcloreValue = new JLabel("-");
+        controlPanel.add(lblInterestFolcloreValue, gbc);
+        
+        gbc.gridx = 0; gbc.gridy++;
+        controlPanel.add(new JLabel("Interés Rock:"), gbc);
+        gbc.gridx = 1;
+        lblInterestRockValue = new JLabel("-");
+        controlPanel.add(lblInterestRockValue, gbc);
+
+        gbc.gridx = 0; gbc.gridy++;
+        controlPanel.add(new JLabel("Interés Urbano:"), gbc);
+        gbc.gridx = 1;
+        lblInterestUrbanoValue = new JLabel("-");
+        controlPanel.add(lblInterestUrbanoValue, gbc);
+        
+         /////////////////////////////////////////////
+        gbc.gridx = 0; gbc.gridy++; gbc.gridwidth = 2;
+        controlPanel.add(new JSeparator(), gbc);
+        gbc.gridy++;
+        controlPanel.add(new JLabel("Agregar Nuevo Usuario"), gbc);
+        
+        gbc.gridy++;
+        controlPanel.add(new JLabel("Nombre:"), gbc);
+        gbc.gridy++;
+        newNameField = new JTextField(15);
+        controlPanel.add(newNameField, gbc);
+        
+        gbc.gridy++;
+        controlPanel.add(new JLabel("Intereses (Tango, Folclore, Rock, Urbano):"), gbc);
+        gbc.gridy++;
+        interestField1 = new JTextField(5);
+        interestField2 = new JTextField(5);
+        interestField3 = new JTextField(5);
+        interestField4 = new JTextField(5);
+        JPanel interestsPanel = new JPanel(new GridLayout(1, 4, 5, 5));
+        interestsPanel.add(interestField1);
+        interestsPanel.add(interestField2);
+        interestsPanel.add(interestField3);
+        interestsPanel.add(interestField4);
+        controlPanel.add(interestsPanel, gbc);
+        
+        gbc.gridy++;
+        addUserBtn = new JButton("Agregar Usuario");
+        addUserBtn.addActionListener(e -> addUser());
+        controlPanel.add(addUserBtn, gbc);
+        
+        /////////////////////////////////////////////
+        gbc.gridx = 0; gbc.gridy++; gbc.gridwidth = 2;
+        controlPanel.add(new JSeparator(), gbc);
+        
+        gbc.gridy++;
+        gbc.gridwidth = 1;
+        controlPanel.add(new JLabel("Cantidad de grupos:"), gbc);
+        gbc.gridx = 1;
+        txtGroup = new JTextField("2", 5);
+        controlPanel.add(txtGroup, gbc);
+        
+        gbc.gridx = 0; gbc.gridy++; gbc.gridwidth = 2;
+        generateGroupsBtn = new JButton("Generar Grupos");
+        generateGroupsBtn.addActionListener(e -> generateGroups());
+        controlPanel.add(generateGroupsBtn, gbc);
+
+        return controlPanel;
+    }
+
+    private void populateComboBox() {
+        for (User u : _graph.getAllUsers()) {
+            comboBox.addItem(u);
+        }
+    }
+    
+    private void updateUserSelectionInfo() {
+        User selectedUser = (User) comboBox.getSelectedItem();
+        if (selectedUser == null) return;
+
+        lblInterestTangoValue.setText(String.valueOf(selectedUser.getInteresTango()));
+        lblInterestFolcloreValue.setText(String.valueOf(selectedUser.getInteresFolclore()));
+        lblInterestRockValue.setText(String.valueOf(selectedUser.getInteresRock()));
+        lblInterestUrbanoValue.setText(String.valueOf(selectedUser.getInteresUrbano()));
+    }
+
+    private void generateGroups() {
+        panelResultados.removeAll();
+        
+        try {
+            int cantidad = Integer.parseInt(txtGroup.getText());
+            if (cantidad < 1 || cantidad > _graph.size()) {
+                JOptionPane.showMessageDialog(this, "La cantidad de grupos debe ser entre 1 y el número de usuarios.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            List<Arista> mst = _solver.getSolution();
+            List<Set<Integer>> grupos = _divider.dividirEnXGrupos(mst, _graph.size(), cantidad);
+            _groups = new Groups(mst, _graph.size(), _graph); // Re-creamos Groups con el MST actual
+            _groups.updateGroups(grupos);
+            
+            for (int i = 0; i < grupos.size(); i++) {
+                StringBuilder groupText = new StringBuilder("<html><b>Grupo: " + (i + 1) + "</b><br/>");
+                groupText.append("<u>Miembros:</u><br/>");
+                for (int id : grupos.get(i)) {
+                    groupText.append(_graph.getUser(id).getNombre()).append("<br/>");
+                }
+                
+                List<String[]> averages = _groups.averagesWritten();
+                if (i < averages.size()) {
+                    groupText.append("<u>Promedios:</u><br/>");
+                    for(String s : averages.get(i)) {
+                         groupText.append(s).append("<br/>");
+                    }
+                }
+                
+                groupText.append("</html>");
+                JLabel lblGroup = new JLabel(groupText.toString());
+                lblGroup.setBorder(new EmptyBorder(5,5,5,5));
+                panelResultados.add(lblGroup);
+            }
+            
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Por favor, ingrese un número válido en la cantidad de grupos.", "Error de Formato", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Ocurrió un error al generar los grupos: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        
+        panelResultados.revalidate();
+        panelResultados.repaint();
+    }
+
+    private void addUser() {
+        if (newNameField.getText().isBlank() || interestField1.getText().isBlank() || interestField2.getText().isBlank() ||
+            interestField3.getText().isBlank() || interestField4.getText().isBlank()) {
+            JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios.", "Campos Vacíos", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        try {
+            String nombre = newNameField.getText();
+            int interesTango = Integer.parseInt(interestField1.getText());
+            int interesFolclore = Integer.parseInt(interestField2.getText());
+            int interesRock = Integer.parseInt(interestField3.getText());
+            int interesUrbano = Integer.parseInt(interestField4.getText());
+
+            User newUser = new User(_graph.size(), nombre, interesTango, interesFolclore, interesRock, interesUrbano);
+            _graph.addUser(newUser);
+            comboBox.addItem(newUser); // Se actualiza el ComboBox
+            _solver.updateGraph(_graph);
+            
+            clearFields();
+            JOptionPane.showMessageDialog(this, "Usuario '" + nombre + "' agregado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Los campos de interés solo deben contener números.", "Error de Entrada", JOptionPane.ERROR_MESSAGE);
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error de Validación", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    private void deleteSelectedUser() {
+        User selectedUser = (User) comboBox.getSelectedItem();
+        if (selectedUser == null) {
+            JOptionPane.showMessageDialog(this, "No hay ningún usuario seleccionado para eliminar.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        int response = JOptionPane.showConfirmDialog(this, 
+            "¿Estás seguro de que quieres eliminar a " + selectedUser.getNombre() + "?", 
+            "Confirmar Eliminación", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+
+        if (response == JOptionPane.YES_OPTION) {
+            
+            _graph.deleteUserAndReIndex(selectedUser);
+
+            
+            _solver.updateGraph(_graph);
+            
+           
+            panelResultados.removeAll();  
+            
+            comboBox.removeAllItems();
+            populateComboBox();
+            
+           
+            updateUserSelectionInfo(); 
+            revalidate();
+            repaint();
+
+            JOptionPane.showMessageDialog(this, "Usuario eliminado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    private void clearFields() {
+        newNameField.setText("");
+        interestField1.setText("");
+        interestField2.setText("");
+        interestField3.setText("");
+        interestField4.setText("");
+    }
 }

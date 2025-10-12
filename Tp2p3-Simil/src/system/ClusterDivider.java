@@ -72,14 +72,14 @@ public class ClusterDivider {
     	if (aristas == null || aristas.isEmpty())
             throw new IllegalArgumentException("La lista de aristas está vacía o es nula");
 
-        Arista max = aristas.get(0);
-        for (Arista a : aristas) {
-            if (a.getPeso() > max.getPeso()) {
-                max = a;
-            }
-        }
+    	 Arista max = aristas.get(0);
+    	    for (Arista a : aristas) {
+    	        if (a.getPeso() > max.getPeso()) {
+    	            max = a;
+    	        }
+    	    }
+    	    return max;
         
-        return max;
 	}
 
 	private void dfs(int nodo, Map<Integer, Set<Integer>> adj, Set<Integer> visitados, Set<Integer> grupo) {

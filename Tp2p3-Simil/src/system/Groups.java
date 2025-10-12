@@ -48,15 +48,13 @@ public class Groups {
 	}
 	
 	private List<Integer[]> averages() {
-		List<Integer[]> average = new ArrayList<Integer[]>();
-		for (int i = 0; i < _groups.size(); i++) {
-			average.add(new Integer[5]);
-			for (Integer[] list : average) {
-				for (int x = 0; x < list.length; x++) {
-					list[x] = 0;
-				}
-			}
-			
+		   List<Integer[]> average = new ArrayList<>();
+		    for (int i = 0; i < _groups.size(); i++) {
+		        Integer[] groupAverages = new Integer[5];
+		      
+		        Arrays.fill(groupAverages, 0); 
+		        average.add(groupAverages);
+		    
 		}
 		int groupNumber = 0;
 		for (Integer[] list : average) {

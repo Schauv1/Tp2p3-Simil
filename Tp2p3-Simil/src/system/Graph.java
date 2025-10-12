@@ -18,6 +18,15 @@ public class Graph {
     public int size() {
         return usuarios.size();
     }
+  
+    public void deleteUserAndReIndex(User userToDelete) {
+        if (userToDelete == null || !usuarios.contains(userToDelete)) return;
+        usuarios.remove(userToDelete);
+
+        for (int i = userToDelete.getId(); i < usuarios.size(); i++) {
+            usuarios.get(i).setId(i);
+        }
+    }
 
     public User getUser(int index) {
         if (index < 0 || index >= usuarios.size()) 
