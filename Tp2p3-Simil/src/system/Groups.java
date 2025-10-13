@@ -47,14 +47,14 @@ public class Groups {
 		return text;
 	}
 	
-	private List<Integer[]> averages() {
-		   List<Integer[]> average = new ArrayList<>();
-		    for (int i = 0; i < _groups.size(); i++) {
-		        Integer[] groupAverages = new Integer[5];
-		      
-		        Arrays.fill(groupAverages, 0); 
-		        average.add(groupAverages);
-		    
+	public List<Integer[]> averages() {
+		List<Integer[]> average = new ArrayList<>();
+		for (int i = 0; i < _groups.size(); i++) {
+			Integer[] groupAverages = new Integer[5];
+
+			Arrays.fill(groupAverages, 0); 
+			average.add(groupAverages);
+
 		}
 		int groupNumber = 0;
 		for (Integer[] list : average) {
@@ -75,6 +75,10 @@ public class Groups {
 		return average;
 	}
 	
+	public List<Set<Integer>> get_groups() {
+		return _groups;
+	}
+
 	private int averageWeightForGroup(int group) {
         Set<Integer> visitados = new HashSet<>();
         int weight = 0;
